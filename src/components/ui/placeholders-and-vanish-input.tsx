@@ -2,9 +2,8 @@
 
 import type React from "react"
 
-import { useState, useEffect, useRef, useCallback } from "react"
+import { useState, useEffect, useRef } from "react"
 import { AnimatePresence, motion } from "framer-motion"
-import { cn } from "@/lib/utils"
 import {
   Select,
   SelectContent,
@@ -29,21 +28,31 @@ export function PlaceholdersAndVanishInput({
   const [currentPlaceholder, setCurrentPlaceholder] = useState(0)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
-  const startAnimation = () => {
-    intervalRef.current = setInterval(() => {
-      setCurrentPlaceholder((prev) => (prev + 1) % placeholders.length)
-    }, 3000)
-  }
-  const handleVisibilityChange = () => {
-    if (document.visibilityState !== "visible" && intervalRef.current) {
-      clearInterval(intervalRef.current)
-      intervalRef.current = null
-    } else if (document.visibilityState === "visible") {
-      startAnimation()
-    }
-  }
+  const inputRef = useRef<HTMLInputElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [value, setValue] = useState("")
+  const [animating, setAnimating] = useState(false)
+  const [isFocused, setIsFocused] = useState(false)
+  const [cursorVisible, setCursorVisible] = useState(true)
+  const cursorIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
+  // Existing placeholder rotation logic
   useEffect(() => {
+    const startAnimation = () => {
+      intervalRef.current = setInterval(() => {
+        setCurrentPlaceholder((prev) => (prev + 1) % placeholders.length)
+      }, 3000)
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState !== "visible" && intervalRef.current) {
+        clearInterval(intervalRef.current)
+        intervalRef.current = null
+      } else if (document.visibilityState === "visible") {
+        startAnimation()
+      }
+    }
+
     startAnimation()
     document.addEventListener("visibilitychange", handleVisibilityChange)
 
@@ -55,128 +64,75 @@ export function PlaceholdersAndVanishInput({
     }
   }, [placeholders])
 
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const newDataRef = useRef<any[]>([])
-  const inputRef = useRef<HTMLInputElement>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const [value, setValue] = useState("")
-  const [animating, setAnimating] = useState(false)
+  // Focus and cursor blinking handling
+  useEffect(() => {
+    // Set initial focus
+    if (inputRef.current) {
+      inputRef.current.focus()
+      setIsFocused(true)
+    }
 
-  const draw = useCallback(() => {
-    if (!inputRef.current) return
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext("2d")
-    if (!ctx) return
+    // Start cursor blinking
+    const blinkCursor = () => {
+      cursorIntervalRef.current = setInterval(() => {
+        setCursorVisible(prev => !prev)
+      }, 530) // Standard cursor blink rate
+    }
 
-    canvas.width = 800
-    canvas.height = 800
-    ctx.clearRect(0, 0, 800, 800)
-    const computedStyles = getComputedStyle(inputRef.current)
+    blinkCursor()
 
-    const fontSize = Number.parseFloat(computedStyles.getPropertyValue("font-size"))
-    ctx.font = `${fontSize * 2}px ${computedStyles.fontFamily}`
-    ctx.fillStyle = "#FFF"
-    ctx.fillText(value, 16, 40)
-
-    const imageData = ctx.getImageData(0, 0, 800, 800)
-    const pixelData = imageData.data
-    const newData: any[] = []
-
-    for (let t = 0; t < 800; t++) {
-      const i = 4 * t * 800
-      for (let n = 0; n < 800; n++) {
-        const e = i + 4 * n
-        if (pixelData[e] !== 0 && pixelData[e + 1] !== 0 && pixelData[e + 2] !== 0) {
-          newData.push({
-            x: n,
-            y: t,
-            color: [pixelData[e], pixelData[e + 1], pixelData[e + 2], pixelData[e + 3]],
-          })
-        }
+    // Clean up
+    return () => {
+      if (cursorIntervalRef.current) {
+        clearInterval(cursorIntervalRef.current)
       }
     }
+  }, [])
 
-    newDataRef.current = newData.map(({ x, y, color }) => ({
-      x,
-      y,
-      r: 1,
-      color: `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${color[3]})`,
-    }))
-  }, [value])
-
-  useEffect(() => {
-    draw()
-  }, [value, draw])
-
-  const animate = (start: number) => {
-    const animateFrame = (pos = 0) => {
-      requestAnimationFrame(() => {
-        const newArr = []
-        for (let i = 0; i < newDataRef.current.length; i++) {
-          const current = newDataRef.current[i]
-          if (current.x < pos) {
-            newArr.push(current)
-          } else {
-            if (current.r <= 0) {
-              current.r = 0
-              continue
-            }
-            current.x += Math.random() > 0.5 ? 1 : -1
-            current.y += Math.random() > 0.5 ? 1 : -1
-            current.r -= 0.05 * Math.random()
-            newArr.push(current)
-          }
-        }
-        newDataRef.current = newArr
-        const ctx = canvasRef.current?.getContext("2d")
-        if (ctx) {
-          ctx.clearRect(pos, 0, 800, 800)
-          newDataRef.current.forEach((t) => {
-            const { x: n, y: i, r: s, color } = t
-            if (n > pos) {
-              ctx.beginPath()
-              ctx.rect(n, i, s, s)
-              ctx.fillStyle = color
-              ctx.strokeStyle = color
-              ctx.stroke()
-            }
-          })
-        }
-        if (newDataRef.current.length > 0) {
-          animateFrame(pos - 8)
-        } else {
-          setValue("")
-          setAnimating(false)
-        }
-      })
-    }
-    animateFrame(start)
+  // Handle focus changes
+  const handleFocus = () => {
+    setIsFocused(true)
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && !animating) {
-      vanishAndSubmit()
-    }
+  const handleBlur = () => {
+    setIsFocused(false)
   }
 
   const vanishAndSubmit = () => {
-    setAnimating(true)
-    draw()
+    if (!animating && value.trim()) {
+      setAnimating(true)
 
-    const value = inputRef.current?.value || ""
-    if (value && inputRef.current) {
-      const maxX = newDataRef.current.reduce((prev, current) => (current.x > prev ? current.x : prev), 0)
-      animate(maxX)
+      // After animation completes, reset the value
+      setTimeout(() => {
+        setValue("")
+        setAnimating(false)
+      }, 600)
     }
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     vanishAndSubmit()
-    onSubmit && onSubmit(e)
+    if (onSubmit) onSubmit(e)
   }
 
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && !animating && value.trim()) {
+      e.preventDefault()
+      vanishAndSubmit()
+
+      // Create a synthetic form event instead of passing the DOM element
+      if (e.currentTarget.form) {
+        const syntheticEvent = {
+          currentTarget: e.currentTarget.form,
+          preventDefault: () => { }
+        } as React.FormEvent<HTMLFormElement>;
+
+        if (onSubmit) onSubmit(syntheticEvent)
+      }
+    }
+  }
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (files && files.length > 0) {
@@ -188,10 +144,13 @@ export function PlaceholdersAndVanishInput({
     fileInputRef.current?.click()
   }
 
+  // Split text into individual characters for animation
+  const characters = value.split("")
+
   return (
     <div className="w-full max-w-3xl mx-auto px-4 sm:px-6 md:px-8 relative">
       <div className="bg-white dark:bg-zinc-800 rounded-2xl border border-gray-200 dark:border-zinc-700 shadow-sm overflow-hidden fixed bottom-0 left-0 right-0 sm:static sm:block z-50 sm:z-0 max-w-3xl mx-auto">
-        {/* Mobile controls above input */}
+        {/* Move buttons above input when on mobile */}
         <div className="sm:hidden flex justify-between items-center px-4 py-2 bg-gray-50 dark:bg-zinc-800/50 border-t border-b border-gray-200 dark:border-zinc-700">
           <div className="flex-grow mr-2">
             <TooltipProvider>
@@ -236,51 +195,43 @@ export function PlaceholdersAndVanishInput({
           </div>
         </div>
 
-        {/* Conditionally render selected file name */}
         {selectedFile && (
           <div className="sm:hidden text-sm text-gray-600 dark:text-gray-400 px-4 py-1 bg-gray-50 dark:bg-zinc-800/50 border-b border-gray-200 dark:border-zinc-700 truncate">
             {selectedFile.name}
           </div>
         )}
-
-        <form className="relative p-4 sm:p-6" onSubmit={handleSubmit}>
-          <canvas
-            className={cn(
-              "absolute pointer-events-none text-base transform scale-[0.3] sm:scale-50 top-[10%] sm:top-[20%] left-2 origin-top-left filter invert dark:invert-0 pr-10 sm:pr-20",
-              !animating ? "opacity-0" : "opacity-100",
-            )}
-            ref={canvasRef}
-          />
+        <form
+          className="relative p-4 sm:p-6"
+          onSubmit={handleSubmit}
+          onClick={() => {
+            if (inputRef.current) {
+              inputRef.current.focus()
+              setIsFocused(true)
+            }
+          }}
+        >
+          {/* Real input field (invisible) */}
           <input
             onChange={(e) => {
               if (!animating) {
                 setValue(e.target.value)
-                onChange && onChange(e)
+                if (onChange) onChange(e)
               }
             }}
             onKeyDown={handleKeyDown}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
             ref={inputRef}
             value={value}
             type="text"
-            className={cn(
-              "w-full relative text-base sm:text-lg z-50 border-none dark:text-white bg-transparent text-gray-700 focus:outline-none focus:ring-0 pr-12 sm:pr-16",
-              animating && "text-transparent dark:text-transparent",
-            )}
+            className="opacity-0 absolute inset-0 w-full h-full z-20"
           />
 
-          <div className="absolute top-4 sm:top-6 right-4 sm:right-6">
-            <Button
-              onClick={vanishAndSubmit}
-              size='icon'
-              className="rounded-full bg-blue-400 hover:bg-blue-500 transition-colors w-8 h-8 sm:w-10 sm:h-10"
-            >
-              <Send className="w-4 h-4 sm:w-5 sm:h-5" />
-            </Button>
-          </div>
-
-          <div className="absolute inset-0 flex items-center pointer-events-none">
-            <AnimatePresence mode="wait">
-              {!value && (
+          {/* Visual representation with animations */}
+          <div className="min-h-[40px] sm:min-h-[48px] flex items-center relative w-full pr-12 sm:pr-16">
+            {/* Placeholder text */}
+            {!value && !animating && (
+              <AnimatePresence mode="wait">
                 <motion.p
                   initial={{
                     y: 5,
@@ -299,12 +250,50 @@ export function PlaceholdersAndVanishInput({
                     duration: 0.3,
                     ease: "linear",
                   }}
-                  className="dark:text-zinc-500 text-base sm:text-lg font-normal text-gray-500 pl-4 sm:pl-6 text-left w-[calc(100%-2rem)]"
+                  className="dark:text-zinc-500 text-base sm:text-lg font-normal text-gray-300 text-left absolute left-0"
                 >
                   {placeholders[currentPlaceholder]}
                 </motion.p>
+              </AnimatePresence>
+            )}
+
+            {/* Animated text characters */}
+            <div className="flex text-base sm:text-lg text-gray-700 dark:text-white items-center">
+              {characters.map((char, index) => (
+                <motion.span
+                  key={`${index}-${char}`}
+                  initial={{ opacity: 1, y: 0 }}
+                  animate={{
+                    opacity: animating ? 0 : 1,
+                    y: animating ? -20 : 0,
+                    x: animating ? (Math.random() * 40 - 20) : 0
+                  }}
+                  transition={{
+                    duration: 0.4,
+                    delay: animating ? index * 0.03 : 0,
+                    ease: "easeOut"
+                  }}
+                >
+                  {char === " " ? "\u00A0" : char}
+                </motion.span>
+              ))}
+
+              {/* Text cursor */}
+              {isFocused && !animating && cursorVisible && (
+                <div className="w-0.5 h-[1.2em] bg-blue-500 dark:bg-blue-400 animate-pulse mx-0.5 self-center"></div>
               )}
-            </AnimatePresence>
+            </div>
+          </div>
+
+          <div className="absolute top-4 sm:top-6 right-4 sm:right-6">
+            <Button
+              onClick={vanishAndSubmit}
+              disabled={!value.trim()}
+              size='icon'
+              className="rounded-full bg-blue-400 hover:bg-blue-500 transition-colors w-8 h-8 sm:w-10 sm:h-10 disabled:opacity-50 disabled:pointer-events-none"
+            >
+              <Send />
+            </Button>
           </div>
         </form>
 
