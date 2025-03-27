@@ -20,9 +20,7 @@ export default function PlaceholdersAndVanishInputDemo() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log(e.target.value)
   }
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    console.log("submitted")
+  const onSubmit = () => {
     // Show the modal after a short delay to allow the animation to complete
     setTimeout(() => {
       setShowModal(true)
@@ -34,13 +32,13 @@ export default function PlaceholdersAndVanishInputDemo() {
       <div className="mb-10 sm:mb-16 text-center">
         <div className="flex items-center justify-center mb-2">
           <Sparkles className="h-6 w-6 mr-2 text-sky-500 animate-pulse" />
-          <span className="text-sm font-medium text-sky-500 uppercase tracking-wider">ACM @ SFSU's 2 billion parameter model</span>
+          <span className="text-sm font-medium text-sky-500 uppercase tracking-wider">ACM @ SFSU&apos;s 2 billion parameter model</span>
         </div>
         <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-blue-400 to-indigo-600">
-          Hello, I'm Lovelace
+          Hello, I&apos;m Lovelace
         </h1>
         <p className="text-lg sm:text-xl text-muted-foreground max-w-md mx-auto">
-          Ask me anything and I'll try my best to help!
+          Ask me anything and I&apos;ll try my best to help!
         </p>
       </div>
 
@@ -68,7 +66,7 @@ export default function PlaceholdersAndVanishInputDemo() {
               🎉 April Fools! 🎉
             </DialogTitle>
             <DialogDescription className="text-center pt-4 text-xl">
-              We don't have our own model, that'd be crazy! But our actual website is almost ready so come back soon.
+              We don&apos;t have our own model, but our actual website is almost ready so come back soon.
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-center mt-4">
