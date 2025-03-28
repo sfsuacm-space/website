@@ -1,9 +1,8 @@
 "use client"
 
-import type React from "react"
-
 import { useState, useEffect, useRef } from "react"
 import { AnimatePresence, motion } from "framer-motion"
+import { cn } from "@/lib/utils"
 import {
   Select,
   SelectContent,
@@ -16,182 +15,292 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip"
 import { Button } from "./button"
 import { Upload, Send } from "lucide-react"
 
+interface placeholderProps {
+  placeholders: string[];
+  currentPlaceholder: number;
+  show: boolean;
+}
+
+// File upload button component
+interface FileUploadButtonProps {
+  onFileChange?: (file: File) => void;
+}
+
+// Animated placeholder component
+const AnimatedPlaceholder = ({ placeholders, currentPlaceholder, show }: placeholderProps) => {
+  if (!show) return null;
+
+  return (
+    <div className="absolute top-0 bottom-0 left-0 flex items-center pointer-events-none">
+      <AnimatePresence mode="wait">
+        <motion.p
+          initial={{ y: 5, opacity: 0 }}
+          key={`current-placeholder-${currentPlaceholder}`}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -15, opacity: 0 }}
+          transition={{ duration: 0.3, ease: "linear" }}
+          className="dark:text-zinc-500 text-base sm:text-lg font-normal text-gray-500"
+        >
+          {placeholders[currentPlaceholder]}
+        </motion.p>
+      </AnimatePresence>
+    </div>
+  );
+};
+
+const FileUploadButton = ({ onFileChange }: FileUploadButtonProps) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      setSelectedFile(files[0]);
+      if (onFileChange) onFileChange(files[0]);
+    }
+  };
+
+  const handleFileUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  return (
+    <>
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        className="hidden"
+        accept="*/*"
+      />
+      {selectedFile && (
+        <span className="text-sm text-gray-600 dark:text-gray-400 mr-2 max-w-[150px] truncate">
+          {selectedFile.name}
+        </span>
+      )}
+      <Button
+        type="button"
+        onClick={handleFileUploadClick}
+        variant='outline'
+        size='icon'
+      >
+        <Upload />
+      </Button>
+    </>
+  );
+};
+// Model selector component
+const ModelSelector = () => {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="w-full">
+            <Select>
+              <SelectTrigger className="w-full sm:w-[180px]" disabled={true}>
+                <SelectValue placeholder="Choose your model" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="chatgpt-4o">ChatGPT 4o</SelectItem>
+                <SelectItem value="claude-35">Claude 3.5</SelectItem>
+                <SelectItem value="gemini">Gemini</SelectItem>
+              </SelectContent>
+            </Select>
+          </span>
+        </TooltipTrigger>
+        <TooltipContent>
+          Coming soon!
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};
+
+// Main input component
 export function PlaceholdersAndVanishInput({
   placeholders,
-  onChange,
   onSubmit,
 }: {
   placeholders: string[]
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
 }) {
-  const [currentPlaceholder, setCurrentPlaceholder] = useState(0)
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const intervalRef = useRef<NodeJS.Timeout | null>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const [value, setValue] = useState("")
-  const [animating, setAnimating] = useState(false)
-  const [isFocused, setIsFocused] = useState(false)
-  const [cursorVisible, setCursorVisible] = useState(true)
-  const cursorIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  // State
+  const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
+  const [value, setValue] = useState("");
+  const [animating, setAnimating] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const [bottomPadding, setBottomPadding] = useState(0);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  // Existing placeholder rotation logic
+  // Refs
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Set isMounted after hydration
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Placeholder rotation logic
   useEffect(() => {
     const startAnimation = () => {
       intervalRef.current = setInterval(() => {
-        setCurrentPlaceholder((prev) => (prev + 1) % placeholders.length)
-      }, 3000)
-    }
+        setCurrentPlaceholder((prev) => (prev + 1) % placeholders.length);
+      }, 3000);
+    };
 
     const handleVisibilityChange = () => {
       if (document.visibilityState !== "visible" && intervalRef.current) {
-        clearInterval(intervalRef.current)
-        intervalRef.current = null
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
       } else if (document.visibilityState === "visible") {
-        startAnimation()
+        startAnimation();
       }
-    }
+    };
 
-    startAnimation()
-    document.addEventListener("visibilitychange", handleVisibilityChange)
+    startAnimation();
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
       if (intervalRef.current) {
-        clearInterval(intervalRef.current)
+        clearInterval(intervalRef.current);
       }
-      document.removeEventListener("visibilitychange", handleVisibilityChange)
-    }
-  }, [placeholders])
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [placeholders]);
 
-  // Focus and cursor blinking handling
+  // Auto-resize textarea
+  const adjustTextareaHeight = () => {
+    if (!textareaRef.current) return;
+
+    textareaRef.current.style.height = 'auto';
+    const newHeight = Math.min(textareaRef.current.scrollHeight, 120);
+    textareaRef.current.style.height = `${newHeight}px`;
+  };
+
+  // Mobile keyboard handling
   useEffect(() => {
-    // Set initial focus
-    if (inputRef.current) {
-      inputRef.current.focus()
-      setIsFocused(true)
+    if (!isMounted) return;
+
+    const isMobile = window.innerWidth <= 640;
+    if (!isMobile) {
+      setBottomPadding(0);
+      return;
     }
+    const textareaElement = textareaRef.current;
+    // handle viewport changes (mobile keyboard appearing)
+    const handleViewportChange = () => {
+      if (!isMobile) return;
 
-    // Start cursor blinking
-    const blinkCursor = () => {
-      cursorIntervalRef.current = setInterval(() => {
-        setCursorVisible(prev => !prev)
-      }, 530) // Standard cursor blink rate
-    }
+      // Use visualViewport API if available
+      if (window.visualViewport) {
+        const viewportHeight = window.visualViewport.height;
+        const windowHeight = window.innerHeight;
 
-    blinkCursor()
-
-    // Clean up
-    return () => {
-      if (cursorIntervalRef.current) {
-        clearInterval(cursorIntervalRef.current)
+        if (windowHeight - viewportHeight > 150) {
+          setBottomPadding(windowHeight - viewportHeight);
+        } else {
+          setBottomPadding(0);
+        }
+      } else {
+        // Fallback for browsers without visualViewport
+        setBottomPadding(0);
       }
+
+      // Adjust textarea height when anything changes
+      adjustTextareaHeight();
+    };
+
+    // Set up event listeners
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleViewportChange);
+    } else {
+      window.addEventListener('resize', handleViewportChange);
     }
-  }, [])
+    if (textareaElement) {
+      textareaElement.addEventListener('input', adjustTextareaHeight);
+    }
 
-  // Handle focus changes
-  const handleFocus = () => {
-    setIsFocused(true)
-  }
+    // Initial adjustment
+    handleViewportChange();
 
-  const handleBlur = () => {
-    setIsFocused(false)
-  }
+    return () => {
+      // Clean up listeners
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', handleViewportChange);
+      } else {
+        window.removeEventListener('resize', handleViewportChange);
+      }
+      if (textareaElement) {
+        textareaElement.removeEventListener('input', adjustTextareaHeight);
+      }
+    };
+  }, [isMounted, value]);
 
+  // Submit handling
   const vanishAndSubmit = () => {
     if (!animating && value.trim()) {
-      setAnimating(true)
+      setAnimating(true);
 
-      // After animation completes, reset the value
       setTimeout(() => {
-        setValue("")
-        setAnimating(false)
-      }, 600)
+        setValue("");
+        setAnimating(false);
+        if (textareaRef.current) {
+          textareaRef.current.style.height = 'auto';
+        }
+      }, 600);
     }
-  }
+  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    vanishAndSubmit()
-    if (onSubmit) onSubmit(e)
-  }
+    e.preventDefault();
+    vanishAndSubmit();
+    if (onSubmit) onSubmit(e);
+  };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Submit on Enter (without Shift)
+    if (e.key === "Enter" && !e.shiftKey && !animating && value.trim()) {
+      e.preventDefault();
+      vanishAndSubmit();
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && !animating && value.trim()) {
-      e.preventDefault()
-      vanishAndSubmit()
-
-      // Create a synthetic form event instead of passing the DOM element
+      // Create a synthetic form event
       if (e.currentTarget.form) {
         const syntheticEvent = {
           currentTarget: e.currentTarget.form,
           preventDefault: () => { }
         } as React.FormEvent<HTMLFormElement>;
 
-        if (onSubmit) onSubmit(syntheticEvent)
+        if (onSubmit) onSubmit(syntheticEvent);
       }
     }
-  }
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
-    if (files && files.length > 0) {
-      setSelectedFile(files[0])
-    }
-  }
-
-  const handleFileUploadClick = () => {
-    fileInputRef.current?.click()
-  }
-
-  // Split text into individual characters for animation
-  const characters = value.split("")
+  };
 
   return (
     <div className="w-full max-w-3xl mx-auto px-4 sm:px-6 md:px-8 relative">
-      <div className="bg-white dark:bg-zinc-800 rounded-2xl border border-gray-200 dark:border-zinc-700 shadow-sm overflow-hidden fixed bottom-0 left-0 right-0 sm:static sm:block z-50 sm:z-0 max-w-3xl mx-auto">
-        {/* Move buttons above input when on mobile */}
+      <div
+        ref={containerRef}
+        className={cn(
+          "bg-white dark:bg-zinc-800 rounded-2xl border border-gray-200 dark:border-zinc-700 shadow-lg overflow-hidden max-w-3xl mx-auto",
+          "fixed bottom-0 sm:static sm:bottom-auto z-50 sm:z-0",
+          "sm:left-0 sm:right-0", // Full width on desktop
+          "left-2 right-2", // Smaller margins on mobile
+        )}
+        style={{
+          paddingBottom: isMounted ? bottomPadding : 0,
+          transition: 'padding-bottom 0.2s ease-out',
+          marginBottom: isMounted ? '12px' : '0'
+        }}
+      >
+        {/* Mobile controls */}
         <div className="sm:hidden flex justify-between items-center px-4 py-2 bg-gray-50 dark:bg-zinc-800/50 border-t border-b border-gray-200 dark:border-zinc-700">
           <div className="flex-grow mr-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="w-full">
-                    <Select>
-                      <SelectTrigger className="w-full" disabled={true}>
-                        <SelectValue placeholder="Choose your model" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="chatgpt-4o">ChatGPT 4o</SelectItem>
-                        <SelectItem value="claude-35">Claude 3.5</SelectItem>
-                        <SelectItem value="gemini">Gemini</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent>
-                  Coming soon!
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <ModelSelector />
           </div>
 
           <div>
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              className="hidden"
-              accept="*/*"
-            />
-            <Button
-              type="button"
-              onClick={handleFileUploadClick}
-              variant='outline'
-              size='icon'
-            >
-              <Upload />
-            </Button>
+            <FileUploadButton onFileChange={setSelectedFile} />
           </div>
         </div>
 
@@ -200,156 +309,68 @@ export function PlaceholdersAndVanishInput({
             {selectedFile.name}
           </div>
         )}
+
+        {/* Input form */}
         <form
-          className="relative p-4 sm:p-6"
+          className="relative px-4 py-3 sm:p-6"
           onSubmit={handleSubmit}
-          onClick={() => {
-            if (inputRef.current) {
-              inputRef.current.focus()
-              setIsFocused(true)
-            }
-          }}
         >
-          {/* Real input field (invisible) */}
-          <input
-            onChange={(e) => {
-              if (!animating) {
-                setValue(e.target.value)
-                if (onChange) onChange(e)
-              }
-            }}
-            onKeyDown={handleKeyDown}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            ref={inputRef}
-            value={value}
-            type="text"
-            className="opacity-0 absolute inset-0 w-full h-full z-20"
-          />
-
-          {/* Visual representation with animations */}
-          <div className="min-h-[40px] sm:min-h-[48px] flex items-center relative w-full pr-12 sm:pr-16">
-            {/* Placeholder text */}
-            {!value && !animating && (
-              <AnimatePresence mode="wait">
-                <motion.p
-                  initial={{
-                    y: 5,
-                    opacity: 0,
-                  }}
-                  key={`current-placeholder-${currentPlaceholder}`}
-                  animate={{
-                    y: 0,
-                    opacity: 1,
-                  }}
-                  exit={{
-                    y: -15,
-                    opacity: 0,
-                  }}
-                  transition={{
-                    duration: 0.3,
-                    ease: "linear",
-                  }}
-                  className="dark:text-zinc-500 text-base sm:text-lg font-normal text-gray-300 text-left absolute left-0"
-                >
-                  {placeholders[currentPlaceholder]}
-                </motion.p>
-              </AnimatePresence>
-            )}
-
-            {/* Animated text characters */}
-            <div className="flex text-base sm:text-lg text-gray-700 dark:text-white items-center">
-              {characters.map((char, index) => (
-                <motion.span
-                  key={`${index}-${char}`}
-                  initial={{ opacity: 1, y: 0 }}
-                  animate={{
-                    opacity: animating ? 0 : 1,
-                    y: animating ? -20 : 0,
-                    x: animating ? (Math.random() * 40 - 20) : 0
-                  }}
-                  transition={{
-                    duration: 0.4,
-                    delay: animating ? index * 0.03 : 0,
-                    ease: "easeOut"
-                  }}
-                >
-                  {char === " " ? "\u00A0" : char}
-                </motion.span>
-              ))}
-
-              {/* Text cursor */}
-              {isFocused && !animating && cursorVisible && (
-                <div className="w-0.5 h-[1.2em] bg-blue-500 dark:bg-blue-400 animate-pulse mx-0.5 self-center"></div>
-              )}
-            </div>
-          </div>
-
-          <div className="absolute top-4 sm:top-6 right-4 sm:right-6">
-            <Button
-              onClick={vanishAndSubmit}
-              disabled={!value.trim()}
-              size='icon'
-              className="rounded-full bg-blue-400 hover:bg-blue-500 transition-colors w-8 h-8 sm:w-10 sm:h-10 disabled:opacity-50 disabled:pointer-events-none"
+          <div className="relative pr-10 sm:pr-14">
+            {/* Auto-expanding textarea */}
+            <motion.div
+              animate={animating ? { opacity: 0, y: -10 } : { opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="w-full relative"
             >
-              <Send />
-            </Button>
+              <textarea
+                ref={textareaRef}
+                value={value}
+                onChange={(e) => {
+                  if (!animating) {
+                    setValue(e.target.value);
+                  }
+                }}
+                onKeyDown={handleKeyDown}
+                placeholder=""
+                className="w-full resize-none overflow-hidden text-base sm:text-lg text-gray-700 dark:text-white bg-transparent border-0 focus:ring-0 focus:outline-none py-0.5 min-h-[28px] max-h-[120px]"
+                rows={1}
+              />
+
+              {/* Animated placeholder */}
+              <AnimatedPlaceholder
+                placeholders={placeholders}
+                currentPlaceholder={currentPlaceholder}
+                show={!value && !animating}
+              />
+            </motion.div>
+
+            {/* Send button */}
+            <div className="absolute right-0 top-0 flex items-center h-full">
+              <Button
+                onClick={vanishAndSubmit}
+                disabled={!value.trim()}
+                size='icon'
+                className="rounded-full bg-blue-400 hover:bg-blue-500 transition-colors w-8 h-8 sm:w-10 sm:h-10 disabled:opacity-50 disabled:pointer-events-none"
+              >
+                <Send className="h-4 w-4 sm:h-5 sm:w-5" />
+              </Button>
+            </div>
           </div>
         </form>
 
         {/* Desktop controls */}
         <div className="hidden sm:flex items-center justify-between px-4 sm:px-6 py-3 border-t border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800/50">
           <div className="flex items-center gap-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span>
-                    <Select>
-                      <SelectTrigger className="w-[180px]" disabled={true}>
-                        <SelectValue placeholder="Choose your model" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="chatgpt-4o">ChatGPT 4o</SelectItem>
-                        <SelectItem value="claude-35">Claude 3.5</SelectItem>
-                        <SelectItem value="gemini">Gemini</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent>
-                  Coming soon!
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <ModelSelector />
           </div>
 
           <div className="flex items-center gap-2">
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              className="hidden"
-              accept="*/*"
-            />
-            {selectedFile && (
-              <span className="text-sm text-gray-600 dark:text-gray-400 mr-2 max-w-[150px] truncate">
-                {selectedFile.name}
-              </span>
-            )}
-            <Button
-              type="button"
-              onClick={handleFileUploadClick}
-              variant='outline'
-              size='icon'
-            >
-              <Upload />
-            </Button>
+            <FileUploadButton onFileChange={setSelectedFile} />
           </div>
         </div>
       </div>
 
-      {/* Padding at the bottom to prevent content from being hidden behind the fixed input */}
-      <div className="h-24 sm:hidden"></div>
     </div>
-  )
+
+  );
 }

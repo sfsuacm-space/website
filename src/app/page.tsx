@@ -17,9 +17,7 @@ export default function PlaceholdersAndVanishInputDemo() {
     "When is SF Hacks 2025?",
     "Is this an April Fool's prank?",
   ]
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value)
-  }
+
   const onSubmit = () => {
     // Show the modal after a short delay to allow the animation to complete
     setTimeout(() => {
@@ -42,7 +40,7 @@ export default function PlaceholdersAndVanishInputDemo() {
         </p>
       </div>
 
-      <PlaceholdersAndVanishInput placeholders={placeholders} onChange={handleChange} onSubmit={onSubmit} />
+      <PlaceholdersAndVanishInput placeholders={placeholders} onSubmit={onSubmit} />
 
       <ConfettiExplosion
         trigger={triggerConfetti}
