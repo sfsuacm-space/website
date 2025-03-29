@@ -1,36 +1,164 @@
-"use client";
+"use client"
 
-import { AnimatePresence, motion } from "motion/react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { cn } from "@/lib/utils";
+import { useState, useEffect, useRef } from "react"
+import { AnimatePresence, motion } from "framer-motion"
+import { cn } from "@/lib/utils"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { TooltipProvider } from "@radix-ui/react-tooltip"
+import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip"
+import { Button } from "./button"
+import { Upload, Send } from "lucide-react"
 
-export function PlaceholdersAndVanishInput({
-  placeholders,
-  onChange,
-  onSubmit,
-}: {
+interface placeholderProps {
   placeholders: string[];
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-}) {
-  const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
+  currentPlaceholder: number;
+  show: boolean;
+}
 
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const startAnimation = () => {
-    intervalRef.current = setInterval(() => {
-      setCurrentPlaceholder((prev) => (prev + 1) % placeholders.length);
-    }, 3000);
-  };
-  const handleVisibilityChange = () => {
-    if (document.visibilityState !== "visible" && intervalRef.current) {
-      clearInterval(intervalRef.current); // Clear the interval when the tab is not visible
-      intervalRef.current = null;
-    } else if (document.visibilityState === "visible") {
-      startAnimation(); // Restart the interval when the tab becomes visible
+// File upload button component
+interface FileUploadButtonProps {
+  onFileChange?: (file: File) => void;
+}
+
+// Animated placeholder component
+const AnimatedPlaceholder = ({ placeholders, currentPlaceholder, show }: placeholderProps) => {
+  if (!show) return null;
+
+  return (
+    <div className="absolute top-0 bottom-0 left-0 flex items-center pointer-events-none">
+      <AnimatePresence mode="wait">
+        <motion.p
+          initial={{ y: 5, opacity: 0 }}
+          key={`current-placeholder-${currentPlaceholder}`}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -15, opacity: 0 }}
+          transition={{ duration: 0.3, ease: "linear" }}
+          className="dark:text-zinc-500 text-base sm:text-lg font-normal text-gray-500"
+        >
+          {placeholders[currentPlaceholder]}
+        </motion.p>
+      </AnimatePresence>
+    </div>
+  );
+};
+
+const FileUploadButton = ({ onFileChange }: FileUploadButtonProps) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      setSelectedFile(files[0]);
+      if (onFileChange) onFileChange(files[0]);
     }
   };
 
+  const handleFileUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  return (
+    <>
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        className="hidden"
+        accept="*/*"
+      />
+      {selectedFile && (
+        <span className="text-sm text-gray-600 dark:text-gray-400 mr-2 max-w-[150px] truncate">
+          {selectedFile.name}
+        </span>
+      )}
+      <Button
+        type="button"
+        onClick={handleFileUploadClick}
+        variant='outline'
+        size='icon'
+      >
+        <Upload />
+      </Button>
+    </>
+  );
+};
+// Model selector component
+const ModelSelector = () => {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="w-full">
+            <Select>
+              <SelectTrigger className="w-full sm:w-[180px]" disabled={true}>
+                <SelectValue placeholder="Choose your model" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="chatgpt-4o">ChatGPT 4o</SelectItem>
+                <SelectItem value="claude-35">Claude 3.5</SelectItem>
+                <SelectItem value="gemini">Gemini</SelectItem>
+              </SelectContent>
+            </Select>
+          </span>
+        </TooltipTrigger>
+        <TooltipContent>
+          Coming soon!
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};
+
+// Main input component
+export function PlaceholdersAndVanishInput({
+  placeholders,
+  onSubmit,
+}: {
+  placeholders: string[]
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
+}) {
+  // State
+  const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
+  const [value, setValue] = useState("");
+  const [animating, setAnimating] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const [bottomPadding, setBottomPadding] = useState(0);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  // Refs
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Set isMounted after hydration
   useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Placeholder rotation logic
+  useEffect(() => {
+    const startAnimation = () => {
+      intervalRef.current = setInterval(() => {
+        setCurrentPlaceholder((prev) => (prev + 1) % placeholders.length);
+      }, 3000);
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState !== "visible" && intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      } else if (document.visibilityState === "visible") {
+        startAnimation();
+      }
+    };
+
     startAnimation();
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
@@ -42,235 +170,207 @@ export function PlaceholdersAndVanishInput({
     };
   }, [placeholders]);
 
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const newDataRef = useRef<any[]>([]);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [value, setValue] = useState("");
-  const [animating, setAnimating] = useState(false);
+  // Auto-resize textarea
+  const adjustTextareaHeight = () => {
+    if (!textareaRef.current) return;
 
-  const draw = useCallback(() => {
-    if (!inputRef.current) return;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    textareaRef.current.style.height = 'auto';
+    const newHeight = Math.min(textareaRef.current.scrollHeight, 120);
+    textareaRef.current.style.height = `${newHeight}px`;
+  };
 
-    canvas.width = 800;
-    canvas.height = 800;
-    ctx.clearRect(0, 0, 800, 800);
-    const computedStyles = getComputedStyle(inputRef.current);
-
-    const fontSize = parseFloat(computedStyles.getPropertyValue("font-size"));
-    ctx.font = `${fontSize * 2}px ${computedStyles.fontFamily}`;
-    ctx.fillStyle = "#FFF";
-    ctx.fillText(value, 16, 40);
-
-    const imageData = ctx.getImageData(0, 0, 800, 800);
-    const pixelData = imageData.data;
-    const newData: any[] = [];
-
-    for (let t = 0; t < 800; t++) {
-      let i = 4 * t * 800;
-      for (let n = 0; n < 800; n++) {
-        let e = i + 4 * n;
-        if (
-          pixelData[e] !== 0 &&
-          pixelData[e + 1] !== 0 &&
-          pixelData[e + 2] !== 0
-        ) {
-          newData.push({
-            x: n,
-            y: t,
-            color: [
-              pixelData[e],
-              pixelData[e + 1],
-              pixelData[e + 2],
-              pixelData[e + 3],
-            ],
-          });
-        }
-      }
-    }
-
-    newDataRef.current = newData.map(({ x, y, color }) => ({
-      x,
-      y,
-      r: 1,
-      color: `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${color[3]})`,
-    }));
-  }, [value]);
-
+  // Mobile keyboard handling
   useEffect(() => {
-    draw();
-  }, [value, draw]);
+    if (!isMounted) return;
 
-  const animate = (start: number) => {
-    const animateFrame = (pos: number = 0) => {
-      requestAnimationFrame(() => {
-        const newArr = [];
-        for (let i = 0; i < newDataRef.current.length; i++) {
-          const current = newDataRef.current[i];
-          if (current.x < pos) {
-            newArr.push(current);
-          } else {
-            if (current.r <= 0) {
-              current.r = 0;
-              continue;
-            }
-            current.x += Math.random() > 0.5 ? 1 : -1;
-            current.y += Math.random() > 0.5 ? 1 : -1;
-            current.r -= 0.05 * Math.random();
-            newArr.push(current);
-          }
-        }
-        newDataRef.current = newArr;
-        const ctx = canvasRef.current?.getContext("2d");
-        if (ctx) {
-          ctx.clearRect(pos, 0, 800, 800);
-          newDataRef.current.forEach((t) => {
-            const { x: n, y: i, r: s, color: color } = t;
-            if (n > pos) {
-              ctx.beginPath();
-              ctx.rect(n, i, s, s);
-              ctx.fillStyle = color;
-              ctx.strokeStyle = color;
-              ctx.stroke();
-            }
-          });
-        }
-        if (newDataRef.current.length > 0) {
-          animateFrame(pos - 8);
-        } else {
-          setValue("");
-          setAnimating(false);
-        }
-      });
-    };
-    animateFrame(start);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && !animating) {
-      vanishAndSubmit();
+    const isMobile = window.innerWidth <= 640;
+    if (!isMobile) {
+      setBottomPadding(0);
+      return;
     }
-  };
+    const textareaElement = textareaRef.current;
+    // handle viewport changes (mobile keyboard appearing)
+    const handleViewportChange = () => {
+      if (!isMobile) return;
 
+      // Use visualViewport API if available
+      if (window.visualViewport) {
+        const viewportHeight = window.visualViewport.height;
+        const windowHeight = window.innerHeight;
+
+        if (windowHeight - viewportHeight > 150) {
+          setBottomPadding(windowHeight - viewportHeight);
+        } else {
+          setBottomPadding(0);
+        }
+      } else {
+        // Fallback for browsers without visualViewport
+        setBottomPadding(0);
+      }
+
+      // Adjust textarea height when anything changes
+      adjustTextareaHeight();
+    };
+
+    // Set up event listeners
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleViewportChange);
+    } else {
+      window.addEventListener('resize', handleViewportChange);
+    }
+    if (textareaElement) {
+      textareaElement.addEventListener('input', adjustTextareaHeight);
+    }
+
+    // Initial adjustment
+    handleViewportChange();
+
+    return () => {
+      // Clean up listeners
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', handleViewportChange);
+      } else {
+        window.removeEventListener('resize', handleViewportChange);
+      }
+      if (textareaElement) {
+        textareaElement.removeEventListener('input', adjustTextareaHeight);
+      }
+    };
+  }, [isMounted, value]);
+
+  // Submit handling
   const vanishAndSubmit = () => {
-    setAnimating(true);
-    draw();
+    if (!animating && value.trim()) {
+      setAnimating(true);
 
-    const value = inputRef.current?.value || "";
-    if (value && inputRef.current) {
-      const maxX = newDataRef.current.reduce(
-        (prev, current) => (current.x > prev ? current.x : prev),
-        0
-      );
-      animate(maxX);
+      setTimeout(() => {
+        setValue("");
+        setAnimating(false);
+        if (textareaRef.current) {
+          textareaRef.current.style.height = 'auto';
+        }
+      }, 600);
     }
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     vanishAndSubmit();
-    onSubmit && onSubmit(e);
+    if (onSubmit) onSubmit(e);
   };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Submit on Enter (without Shift)
+    if (e.key === "Enter" && !e.shiftKey && !animating && value.trim()) {
+      e.preventDefault();
+      vanishAndSubmit();
+
+      // Create a synthetic form event
+      if (e.currentTarget.form) {
+        const syntheticEvent = {
+          currentTarget: e.currentTarget.form,
+          preventDefault: () => { }
+        } as React.FormEvent<HTMLFormElement>;
+
+        if (onSubmit) onSubmit(syntheticEvent);
+      }
+    }
+  };
+
   return (
-    <form
-      className={cn(
-        "w-full relative max-w-xl mx-auto bg-white dark:bg-zinc-800 h-12 rounded-full overflow-hidden shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),_0px_1px_0px_0px_rgba(25,28,33,0.02),_0px_0px_0px_1px_rgba(25,28,33,0.08)] transition duration-200",
-        value && "bg-gray-50"
-      )}
-      onSubmit={handleSubmit}
-    >
-      <canvas
+    <div className="w-full max-w-3xl mx-auto px-4 sm:px-6 md:px-8 relative">
+      <div
+        ref={containerRef}
         className={cn(
-          "absolute pointer-events-none  text-base transform scale-50 top-[20%] left-2 sm:left-8 origin-top-left filter invert dark:invert-0 pr-20",
-          !animating ? "opacity-0" : "opacity-100"
+          "bg-white dark:bg-zinc-800 rounded-2xl border border-gray-200 dark:border-zinc-700 shadow-lg overflow-hidden max-w-3xl mx-auto",
+          "fixed bottom-0 sm:static sm:bottom-auto z-50 sm:z-0",
+          "sm:left-0 sm:right-0", // Full width on desktop
+          "left-2 right-2", // Smaller margins on mobile
         )}
-        ref={canvasRef}
-      />
-      <input
-        onChange={(e) => {
-          if (!animating) {
-            setValue(e.target.value);
-            onChange && onChange(e);
-          }
+        style={{
+          paddingBottom: isMounted ? bottomPadding : 0,
+          transition: 'padding-bottom 0.2s ease-out',
+          marginBottom: isMounted ? '12px' : '0'
         }}
-        onKeyDown={handleKeyDown}
-        ref={inputRef}
-        value={value}
-        type="text"
-        className={cn(
-          "w-full relative text-sm sm:text-base z-50 border-none dark:text-white bg-transparent text-black h-full rounded-full focus:outline-none focus:ring-0 pl-4 sm:pl-10 pr-20",
-          animating && "text-transparent dark:text-transparent"
-        )}
-      />
-
-      <button
-        disabled={!value}
-        type="submit"
-        className="absolute right-2 top-1/2 z-50 -translate-y-1/2 h-8 w-8 rounded-full disabled:bg-gray-100 bg-black dark:bg-zinc-900 dark:disabled:bg-zinc-800 transition duration-200 flex items-center justify-center"
       >
-        <motion.svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="text-gray-300 h-4 w-4"
-        >
-          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-          <motion.path
-            d="M5 12l14 0"
-            initial={{
-              strokeDasharray: "50%",
-              strokeDashoffset: "50%",
-            }}
-            animate={{
-              strokeDashoffset: value ? 0 : "50%",
-            }}
-            transition={{
-              duration: 0.3,
-              ease: "linear",
-            }}
-          />
-          <path d="M13 18l6 -6" />
-          <path d="M13 6l6 6" />
-        </motion.svg>
-      </button>
+        {/* Mobile controls */}
+        <div className="sm:hidden flex justify-between items-center px-4 py-2 bg-gray-50 dark:bg-zinc-800/50 border-t border-b border-gray-200 dark:border-zinc-700">
+          <div className="flex-grow mr-2">
+            <ModelSelector />
+          </div>
 
-      <div className="absolute inset-0 flex items-center rounded-full pointer-events-none">
-        <AnimatePresence mode="wait">
-          {!value && (
-            <motion.p
-              initial={{
-                y: 5,
-                opacity: 0,
-              }}
-              key={`current-placeholder-${currentPlaceholder}`}
-              animate={{
-                y: 0,
-                opacity: 1,
-              }}
-              exit={{
-                y: -15,
-                opacity: 0,
-              }}
-              transition={{
-                duration: 0.3,
-                ease: "linear",
-              }}
-              className="dark:text-zinc-500 text-sm sm:text-base font-normal text-neutral-500 pl-4 sm:pl-12 text-left w-[calc(100%-2rem)] truncate"
+          <div>
+            <FileUploadButton onFileChange={setSelectedFile} />
+          </div>
+        </div>
+
+        {selectedFile && (
+          <div className="sm:hidden text-sm text-gray-600 dark:text-gray-400 px-4 py-1 bg-gray-50 dark:bg-zinc-800/50 border-b border-gray-200 dark:border-zinc-700 truncate">
+            {selectedFile.name}
+          </div>
+        )}
+
+        {/* Input form */}
+        <form
+          className="relative px-4 py-3 sm:p-6"
+          onSubmit={handleSubmit}
+        >
+          <div className="relative pr-10 sm:pr-14">
+            {/* Auto-expanding textarea */}
+            <motion.div
+              animate={animating ? { opacity: 0, y: -10 } : { opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="w-full relative"
             >
-              {placeholders[currentPlaceholder]}
-            </motion.p>
-          )}
-        </AnimatePresence>
+              <textarea
+                ref={textareaRef}
+                value={value}
+                onChange={(e) => {
+                  if (!animating) {
+                    setValue(e.target.value);
+                  }
+                }}
+                onKeyDown={handleKeyDown}
+                placeholder=""
+                className="w-full resize-none overflow-hidden text-base sm:text-lg text-gray-700 dark:text-white bg-transparent border-0 focus:ring-0 focus:outline-none py-0.5 min-h-[28px] max-h-[120px]"
+                rows={1}
+              />
+
+              {/* Animated placeholder */}
+              <AnimatedPlaceholder
+                placeholders={placeholders}
+                currentPlaceholder={currentPlaceholder}
+                show={!value && !animating}
+              />
+            </motion.div>
+
+            {/* Send button */}
+            <div className="absolute right-0 top-0 flex items-center h-full">
+              <Button
+                onClick={vanishAndSubmit}
+                disabled={!value.trim()}
+                size='icon'
+                className="rounded-full bg-blue-400 hover:bg-blue-500 transition-colors w-8 h-8 sm:w-10 sm:h-10 disabled:opacity-50 disabled:pointer-events-none"
+              >
+                <Send className="h-4 w-4 sm:h-5 sm:w-5" />
+              </Button>
+            </div>
+          </div>
+        </form>
+
+        {/* Desktop controls */}
+        <div className="hidden sm:flex items-center justify-between px-4 sm:px-6 py-3 border-t border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800/50">
+          <div className="flex items-center gap-2">
+            <ModelSelector />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <FileUploadButton onFileChange={setSelectedFile} />
+          </div>
+        </div>
       </div>
-    </form>
+
+    </div>
+
   );
 }
