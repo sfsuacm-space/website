@@ -1,3 +1,4 @@
+import { ACM_INFO } from "@/constants/messages";
 import React from "react";
 
 const SocialLinks = () => {
@@ -5,7 +6,7 @@ const SocialLinks = () => {
     <div className="flex space-x-6">
       {/* Instagram Link */}
       <a
-        href="https://www.instagram.com/yourusername"
+        href={ACM_INFO.ACM_INSTAGRAM_URL}
         target="_blank"
         rel="noopener noreferrer"
         className="text-blue-500 hover:text-blue-700"
@@ -18,7 +19,7 @@ const SocialLinks = () => {
 
       {/* LinkedIn Link */}
       <a
-        href="https://www.linkedin.com/in/yourusername"
+        href={ACM_INFO.ACM_LINKEDIN_URL}
         target="_blank"
         rel="noopener noreferrer"
         className="text-blue-500 hover:text-blue-700"
@@ -30,7 +31,7 @@ const SocialLinks = () => {
       </a>
       {/* Discord Link */}
       <a
-        href="https://discord.com/users/yourusername"
+        href={ACM_INFO.ACM_DISCORD_INVITE_URL}
         target="_blank"
         rel="noopener noreferrer"
         className="text-blue-500 hover:text-blue-700"
@@ -42,7 +43,7 @@ const SocialLinks = () => {
       </a>
       {/* Bento Link */}
       <a
-        href="https://your-bento-link"
+        href={ACM_INFO.ACM_BENTO_URL}
         target="_blank"
         rel="noopener noreferrer"
         className="text-blue-500 hover:text-blue-700"

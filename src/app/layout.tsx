@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Quicksand } from "next/font/google";
-import "./globals.css";
+import "./styles/globals.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import Head from "next/head";
 
@@ -45,7 +45,7 @@ export default function RootLayout({
       </head>
 
       <body
-        className={`${quicksandFont.variable} ${geistMono.variable} antialiased`}
+        className={`${quicksandFont.variable} ${geistMono.variable} antialiased `}
       >
         {children}
         <footer className="text-center p-6 mt-8">

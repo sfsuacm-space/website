@@ -1,20 +1,17 @@
 "use client";
-
+import getOrganizationLogo from "@/lib/getOrganizationLogo";
 import { cn } from "@/lib/utils";
+import { AffiliateOrganization } from "@/types/affiliateOrganization";
 import React, { useEffect, useState } from "react";
 
 export const InfiniteMovingCards = ({
-  items,
+  organizations,
   direction = "left",
-  speed = "fast",
-  pauseOnHover = true,
+  speed = "slow",
+  pauseOnHover = false,
   className,
 }: {
-  items: {
-    org: string;
-    name: string;
-    link: string;
-  }[];
+  organizations: AffiliateOrganization[];
   direction?: "left" | "right";
   speed?: "fast" | "normal" | "slow";
   pauseOnHover?: boolean;
@@ -85,16 +82,16 @@ export const InfiniteMovingCards = ({
           pauseOnHover && "hover:[animation-play-state:paused]"
         )}
       >
-        {items.map((item) => (
-          <li className="flex flex-col w-64 p-4" key={item.name}>
+        {organizations.map((org) => (
+          <li className="flex flex-col w-64 p-4" key={org.fullName}>
             <div className="flex flex-row items-center justify-start space-x-4">
               <img
-                src={`${item.org}`}
-                alt={`${item.name} logo`}
+                src={getOrganizationLogo(org.name, "full")}
+                alt={`${org.fullName} logo`}
                 className="w-10 h-auto "
               />
               <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                {item.name}
+                {org.name}
               </p>
             </div>
           </li>
