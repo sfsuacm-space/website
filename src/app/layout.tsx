@@ -1,13 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Quicksand } from "next/font/google";
+import { Geist_Mono, Quicksand } from "next/font/google";
 import "./styles/globals.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import Head from "next/head";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
 
 const quicksandFont = Quicksand({
   variable: "--font-quicksand",

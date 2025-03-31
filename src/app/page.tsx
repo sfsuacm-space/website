@@ -1,6 +1,5 @@
 "use client";
 import type React from "react";
-import { useState } from "react";
 
 import { TypewriterEffect } from "@/components/ui/typewriter-effect";
 import { ACM_INFO, SFHACKS_INFO } from "@/constants/messages";

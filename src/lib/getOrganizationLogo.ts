@@ -6,6 +6,6 @@ function _cleanOrgName(name: string): string {
 }
 
 
-export default function getOrganizationLogo(organizationName: string, type: "minimal" | "full"): string { 
+export default function getOrganizationLogo(organizationName: string): string { 
     return `/assets/squircles/${_cleanOrgName(organizationName)}-squircle.png`;
 }

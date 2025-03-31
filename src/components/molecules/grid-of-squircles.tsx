@@ -15,7 +15,7 @@ const GridOfSquircles: React.FC = () => {
   useEffect(() => {
     const timers: ReturnType<typeof setTimeout>[] = [];
 
-    squircleStates.forEach((state, index) => {
+    squircleStates.forEach((_, index) => {
       const toggleVisibility = () => {
         const showTime = getRandomTime(5000, 10000); // Random time between 1-5 seconds to show the squircle
         const hideTime = getRandomTime(1000, 40000); // Random time after showTime to hide the squircle
@@ -33,14 +33,14 @@ const GridOfSquircles: React.FC = () => {
       };
 
       // Initial call to start toggling visibility for the squircle
-      timers.push(setTimeout(toggleVisibility, getRandomTime(5000, 20000)));
+      timers.push(setTimeout(toggleVisibility, getRandomTime(1000, 5000)));
     });
 
     // Cleanup timers on component unmount
     return () => {
       timers.forEach((timer) => clearTimeout(timer));
     };
-  }, []); // Empty dependency array so the effect runs only once
+  }); // Empty dependency array so the effect runs only once
 
   return (
     <div className="absolute inset-0 flex items-center justify-center overflow-clip">

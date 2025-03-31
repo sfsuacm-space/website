@@ -3,6 +3,7 @@ import getOrganizationLogo from "@/lib/getOrganizationLogo";
 import { cn } from "@/lib/utils";
 import { AffiliateOrganization } from "@/types/affiliateOrganization";
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 
 export const InfiniteMovingCards = ({
   organizations,
@@ -20,9 +21,6 @@ export const InfiniteMovingCards = ({
   const containerRef = React.useRef<HTMLDivElement>(null);
   const scrollerRef = React.useRef<HTMLUListElement>(null);
 
-  useEffect(() => {
-    addAnimation();
-  }, []);
   const [start, setStart] = useState(false);
   function addAnimation() {
     if (containerRef.current && scrollerRef.current) {
@@ -40,6 +38,11 @@ export const InfiniteMovingCards = ({
       setStart(true);
     }
   }
+
+  useEffect(() => {
+    addAnimation();
+  });
+
   const getDirection = () => {
     if (containerRef.current) {
       if (direction === "left") {
@@ -91,15 +94,17 @@ export const InfiniteMovingCards = ({
                   window.open(org.joinLink, "_blank");
                 }}
               >
-                <img
-                  src={getOrganizationLogo(org.name, "full")}
+                <Image
+                  src={getOrganizationLogo(org.name)}
                   alt={`${org.fullName} logo`}
-                  className="w-10 h-auto "
+                  width={200}
+                  height={200}
+                  className="w-10 h-auto"
                 />
-                <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                  {org.name}
-                </p>
               </div>
+              <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                {org.name}
+              </p>
             </div>
           </li>
         ))}
