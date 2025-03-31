@@ -159,3 +159,7 @@
 .img-animation {
   animation: changeImages 5s infinite;
 }
+
+body {
+  font-family: var(--font-quicksand);
+}
