@@ -14,27 +14,30 @@ import GridOfSquircles from "@/components/molecules/grid-of-squircles";
 export default function LandingPage() {
   const words = [
     {
-      text: "build",
+      text: "party",
     },
     {
-      text: "community. ",
+      text: "hard.",
     },
 
     {
       text: "code",
       className: "font-mono",
     },
-
     {
       text: "harder.",
       className: "font-mono",
     },
     {
-      text: "touch",
+      text: "ACM",
       className: "text-primary dark:text-green-400",
     },
     {
-      text: "grass.",
+      text: "at",
+      className: "text-primary dark:text-green-400",
+    },
+    {
+      text: "SFSU",
       className: "text-primary dark:text-green-400",
     },
   ];
@@ -44,9 +47,12 @@ export default function LandingPage() {
       <div className="relative z-10 flex flex-col items-center justify-center w-full">
         <Hero>
           <p className="text-base font-medium mt-4 text-center tracking-[.25em] text-gray-400 capatalize">
-            MORE THAN CODE
+            more than class
           </p>
-          <TypewriterEffect words={words} />
+          <div className="h-30 md:h-auto sm:h-auto">
+            <TypewriterEffect words={words} className="px-14 md:px-0" />
+          </div>
+
           <p className="text-base font-medium mt-6 text-center">
             The premiere computer science club @ San Francisco State University
             🍃
@@ -74,8 +80,8 @@ export default function LandingPage() {
           </div>
           <div className="mt-16">
             <SocialLinks />
-          </div>{" "}
-          <div className="absolute bottom-0 p-4">
+          </div>
+          <div className="absolute bottom-0 p-8">
             <p className="text-gray-500 text-base text-center">
               Our Affiliated Student Organizations
             </p>
