@@ -4,7 +4,6 @@ import React from "react";
 const SocialLinks = () => {
   return (
     <div className="flex space-x-6">
-      {/* Instagram Link */}
       <a
         href={ACM_INFO.ACM_INSTAGRAM_URL}
         target="_blank"
@@ -17,9 +16,8 @@ const SocialLinks = () => {
         ></img>
       </a>
 
-      {/* LinkedIn Link */}
       <a
-        href={ACM_INFO.ACM_LINKEDIN_URL}
+        href={`${ACM_INFO.ACM_LINKEDIN_URL}`}
         target="_blank"
         rel="noopener noreferrer"
         className="text-blue-500 hover:text-blue-700"
@@ -31,7 +29,7 @@ const SocialLinks = () => {
       </a>
       {/* Discord Link */}
       <a
-        href={ACM_INFO.ACM_DISCORD_INVITE_URL}
+        href={ACM_INFO.GITHUB_URL}
         target="_blank"
         rel="noopener noreferrer"
         className="text-blue-500 hover:text-blue-700"
@@ -41,7 +39,6 @@ const SocialLinks = () => {
           className="w-[24]"
         ></img>
       </a>
-      {/* Bento Link */}
       <a
         href={ACM_INFO.ACM_BENTO_URL}
         target="_blank"

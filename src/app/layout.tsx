@@ -49,48 +49,7 @@ export default function RootLayout({
       >
         {children}
         <footer className="text-center p-6 mt-8">
-          <div className="space-x-6">
-            <a
-              href="https://discord.gg/your-link"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xl"
-            >
-              <i className="fab fa-discord"></i>
-            </a>
-            <a
-              href="https://instagram.com/your-profile"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xl"
-            >
-              <i className="fab fa-instagram"></i>
-            </a>
-            <a
-              href="https://www.linkedin.com/company/your-company"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xl"
-            >
-              <i className="fab fa-linkedin"></i>
-            </a>
-            <a
-              href="mailto:contact@yourdomain.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xl"
-            >
-              <i className="fas fa-envelope"></i>
-            </a>
-            <a
-              href="https://yourwebsite.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xl"
-            >
-              <i className="fas fa-globe"></i>
-            </a>
-          </div>
+          <div className="space-x-6"></div>
           <p className="text-sm mt-4">
             &copy; 2025 ACM@SFSU. All rights reserved.
           </p>

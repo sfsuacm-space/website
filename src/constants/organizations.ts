@@ -5,52 +5,47 @@ const affiliateOrganizations: AffiliateOrganization[] = [
   {
     fullName: "3D Printing",
     name: "3D Printing",      
-    joinLink: "https://example.com/3dprinting-join",
+    joinLink: "https://discord.gg/UcRnnMVKfW",
   },
   {
     fullName: "Spark SF Club",
     name: "Spark SF",      
-    joinLink: "https://example.com/3dprinting-join",
+    joinLink: "https://discord.gg/XCwRXspP82",
   },
     { 
     fullName: "Artitficial Intelligence Club",
     name: "AI",
-    joinLink: "https://example.com/ai-join",
-    },
-    { 
-    fullName: "3D Printing Club",
-    name: "3D Printing",
-    joinLink: "https://example.com/ai-join",
+    joinLink: "https://discord.gg/7C8729PAjA",
     },
     { 
     fullName: "Cybersecurity Club",
     name: "Cybersecurity",
-    joinLink: "https://example.com/ai-join",
+    joinLink: "https://discord.gg/fsJ86BmdW6",
     },
      { 
     fullName: "Bit-Bots Club",
     name: "Bit-Bots",
-    joinLink: "https://example.com/ai-join",
+    joinLink: "https://discord.gg/eZFAtfpRxR",
     },
     { 
     fullName: "ColorStack Student Chapter at SFSU",
     name: "ColorStack",
-    joinLink: "https://example.com/ai-join",
+    joinLink: "https://discord.gg/zBkjqqdFDu",
     },
      { 
     fullName: "Game Development Club",
     name: "Game Development",
-    joinLink: "https://example.com/ai-join",
+    joinLink: "https://discord.gg/yqb4ZXUvxB",
     },
      { 
     fullName: "Society of Women's Engineers Student Chapter at SFSU",
     name: "SWE",
-    joinLink: "https://example.com/ai-join",
+    joinLink: "https://discord.gg/ZhGQ5ZBZWY",
     },
     { 
     fullName: "Data Science Society Club",
     name: "DSS",
-    joinLink: "https://example.com/ai-join",
+    joinLink: "https://discord.gg/GUQ6vWAxt3",
     },
   ]
 
