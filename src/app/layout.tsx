@@ -50,7 +50,7 @@ export default function RootLayout({
       </head>
 
       <body
-        className={`${quicksandFont.variable} font-sans ${geistMono.variable} antialiased  `}
+        className={`${quicksandFont.variable} font-sans ${geistMono.variable} antialiased dark:text-white `}
       >
         {children}
         <footer className="text-center p-6 mt-8">

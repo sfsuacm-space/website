@@ -42,7 +42,7 @@ const SocialLinks = () => {
         className="text-blue-500 hover:text-blue-700"
       >
         <Image
-          src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/960px-Octicons-mark-github.svg.png?20180806170715"
+          src="https://cdn4.iconfinder.com/data/icons/social-media-logos-6/512/71-github-512.png"
           width={24}
           height={24}
           className="w-[24]"

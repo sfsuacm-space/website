@@ -9,12 +9,14 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'images.seeklogo.com',
+        hostname: 'cdn4.iconfinder.com',
       },
       {
         protocol: 'https',
         hostname: 'cdn.prod.website-files.com',
       },
+
+      
        
     ],
   },

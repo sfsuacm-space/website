@@ -17,7 +17,7 @@ export const PillButton = ({
   return (
     <button
       className={cn(
-        `w-40 h-12 rounded-xl cursor-pointer group text-white text-sm bg-black`,
+        `w-40 h-12 rounded-xl cursor-pointer group text-sm bg-black dark:bg-transparent text-white`,
         className
       )}
       onClick={onClick}
