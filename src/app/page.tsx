@@ -29,19 +29,19 @@ export default function LandingPage() {
     },
     {
       text: "ACM",
-      className: "text-primary dark:text-primary",
+      className: "text-primary ",
     },
     {
       text: "at",
-      className: "text-primary dark:text-primary",
+      className: "text-primary ",
     },
     {
       text: "SFSU",
-      className: "text-primary dark:text-primary",
+      className: "text-primary ",
     },
   ];
   return (
-    <div className="min-h-screen items-center justify-center  bg-white dark:bg-black overflow-clip">
+    <div className="min-h-screen items-center justify-center  bg-white overflow-clip">
       <GridOfSquircles />
       <div className="relative z-10 flex flex-col items-center justify-center w-full">
         <Hero>
@@ -81,7 +81,7 @@ export default function LandingPage() {
             <SocialLinks />
           </div>
           <div className="absolute bottom-0 p-8">
-            <p className="text-gray-500 dark:text-gray-300 text-base text-center">
+            <p className="text-gray-500  text-base text-center">
               Our Affiliated Student Organizations
             </p>
             <InfiniteMovingCards organizations={affiliateOrganizations} />
