@@ -45,14 +45,13 @@ export default function LandingPage() {
       <GridOfSquircles />
       <div className="relative z-10 flex flex-col items-center justify-center w-full">
         <Hero>
-          <p className="text-base font-medium mt-4 text-center tracking-[.25em] text-gray-400 capatalize">
-            more than class
+          <p className="text-lg font-medium mt-4 text-center tracking-[.25em]">
+            computer science go brrr
           </p>
           <div className="min-h-30 md:min-h-auto sm:min-h-auto">
             <TypewriterEffect words={words} className="px-14 md:px-0" />
           </div>
-
-          <p className="text-base font-medium mt-6 text-center ">
+          <p className="text-xl mt-6 text-center font-medium tr">
             The premiere computer science club @ San Francisco State University
             🍃
           </p>
@@ -81,8 +80,8 @@ export default function LandingPage() {
             <SocialLinks />
           </div>
           <div className="absolute bottom-0 p-8">
-            <p className="text-gray-500  text-base text-center">
-              Our Affiliated Student Organizations
+            <p className="text-base font-bold text-center">
+              Our affiliated student organizations
             </p>
             <InfiniteMovingCards organizations={affiliateOrganizations} />
           </div>

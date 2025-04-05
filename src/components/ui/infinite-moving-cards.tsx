@@ -102,7 +102,7 @@ export const InfiniteMovingCards = ({
                   className="w-10 h-auto"
                 />
               </div>
-              <p className="text-lg font-bold text-gray-900">{org.name}</p>
+              <p className="text-2xl font-bold text-gray-900">{org.name}</p>
             </div>
           </li>
         ))}

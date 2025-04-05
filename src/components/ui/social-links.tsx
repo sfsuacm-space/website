@@ -3,6 +3,8 @@ import React from "react";
 import Image from "next/image";
 
 const SocialLinks = () => {
+  const imgSize = 36;
+  const imgSizeRes = 48;
   return (
     <div className="flex space-x-6">
       <a
@@ -13,9 +15,9 @@ const SocialLinks = () => {
       >
         <Image
           src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Instagram_logo_2022.svg/2048px-Instagram_logo_2022.svg.png"
-          width={24}
-          height={24}
-          className="w-[24]"
+          width={imgSizeRes}
+          height={imgSizeRes}
+          className={`w-[${imgSize}]`}
           alt={"Instagram"}
         />
       </a>
@@ -28,9 +30,9 @@ const SocialLinks = () => {
       >
         <Image
           src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/LinkedIn_icon.svg/2048px-LinkedIn_icon.svg.png"
-          width={24}
-          height={24}
-          className="w-[24]"
+          width={imgSizeRes}
+          height={imgSizeRes}
+          className={`w-[${imgSize}]`}
           alt="LinkedIn"
         />
       </a>
@@ -43,9 +45,9 @@ const SocialLinks = () => {
       >
         <Image
           src="https://cdn4.iconfinder.com/data/icons/social-media-logos-6/512/71-github-512.png"
-          width={24}
-          height={24}
-          className="w-[24]"
+          width={imgSizeRes}
+          height={imgSizeRes}
+          className={`w-[${imgSize}]`}
           alt="GitHub"
         />
       </a>
@@ -57,9 +59,9 @@ const SocialLinks = () => {
       >
         <Image
           src="https://cdn.prod.website-files.com/6335b33630f88833a92915fc/63e501246a370e0d4462f2ed_herologo.png"
-          width={24}
-          height={24}
-          className="w-[24]"
+          width={imgSizeRes}
+          height={imgSizeRes}
+          className={`w-[${imgSize}]`}
           alt="Bento"
         />
       </a>
