@@ -10,7 +10,8 @@ export default function Hero({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center h-screen p-4 sm:p-8 md:p-10 lg:p-14"
+        "flex flex-col items-center justify-center h-screen p-4 sm:p-8 md:p-10 lg:p-14",
+        className
       )}
     >
       {children}
