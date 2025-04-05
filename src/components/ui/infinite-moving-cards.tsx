@@ -89,7 +89,7 @@ export const InfiniteMovingCards = ({
           <li className="flex flex-col px-16" key={org.fullName}>
             <div className="flex flex-row items-center cursor-pointer justify-start space-x-4 hover:opacity-10 transition-all duration-300">
               <div
-                className="flex flex-row space-x-2 w-auto cursor-pointer  justify-start items-center"
+                className="flex flex-row space-x-2 w-auto justify-start items-center"
                 onClick={() => {
                   window.open(org.joinLink, "_blank");
                 }}

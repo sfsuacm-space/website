@@ -41,10 +41,11 @@ export default function LandingPage() {
     },
   ];
   return (
-    <div className="min-h-screen items-center justify-center  bg-white overflow-clip">
+    <div className="min-h-screen max-h-[150vh] flex flex-col items-center justify-center overflow-clip bg-white">
       <GridOfSquircles />
       <div className="relative z-10 flex flex-col items-center justify-center w-full">
         <Hero>
+          <div></div>
           <p className="text-lg font-medium mt-4 text-center tracking-[.25em]">
             computer science go brrr
           </p>
@@ -62,7 +63,7 @@ export default function LandingPage() {
               iconRight={
                 <i
                   className="fab fa-discord text-lg transition-transform duration-500 ease-in-out transform 
-              group-hover:rotate-360"
+          group-hover:rotate-360"
                 ></i>
               }
               onClick={() => {
@@ -79,13 +80,13 @@ export default function LandingPage() {
           <div className="mt-16">
             <SocialLinks />
           </div>
-          <div className="absolute bottom-0 p-8">
-            <p className="text-base font-bold text-center">
-              Our affiliated student organizations
-            </p>
-            <InfiniteMovingCards organizations={affiliateOrganizations} />
-          </div>
         </Hero>
+      </div>
+      <div className="p-8">
+        <p className="text-base font-bold text-center">
+          Our affiliated student organizations
+        </p>
+        <InfiniteMovingCards organizations={affiliateOrganizations} />
       </div>
     </div>
   );

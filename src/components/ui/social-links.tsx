@@ -3,8 +3,8 @@ import React from "react";
 import Image from "next/image";
 
 const SocialLinks = () => {
-  const imgSize = 36;
-  const imgSizeRes = 48;
+  const imgSize = "36px";
+  const imgSizeRes = 36;
   return (
     <div className="flex space-x-6">
       <a
