@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 
 const GridOfSquircles: React.FC = () => {
-  const gridSize = 5; // Number of squircles per row/column (adjust as needed)
+  const gridSize = 6; // Number of squircles per row/column (adjust as needed)
   const [squircleStates, setSquircleStates] = useState<boolean[]>(
     Array(gridSize * gridSize).fill(false)
   );
@@ -43,16 +43,18 @@ const GridOfSquircles: React.FC = () => {
   }); // Empty dependency array so the effect runs only once
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center overflow-clip">
-      <div className="grid grid-cols-5 gap-4 h-full transform rotate-45 absolute bottom-100 sm:bottom-100 md:bottom-180 max-w-full">
-        {squircleStates.map((isVisible, index) => (
-          <div
-            key={index}
-            className={`w-20 h-20 sm:w-40 sm:h-40 md:w-60 md:h-60 bg-blue-100 rounded-[20%] transition-opacity duration-1000 ease-in-out ${
-              isVisible ? "opacity-100" : "opacity-0"
-            }`}
-          ></div>
-        ))}
+    <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+      <div className="absolute bottom-100 transform rotate-45">
+        <div className="grid grid-cols-5 gap-6 ">
+          {squircleStates.map((isVisible, index) => (
+            <div
+              key={index}
+              className={`w-60 h-60 bg-blue-100 rounded-[20%] transition-opacity duration-1000 ease-in-out ${
+                isVisible ? "opacity-100" : "opacity-0"
+              }`}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

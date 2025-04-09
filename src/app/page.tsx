@@ -41,21 +41,18 @@ export default function LandingPage() {
     },
   ];
   return (
-    <div className="min-h-screen max-h-[150vh] flex flex-col items-center justify-center overflow-clip bg-white">
+    <div className="min-h-screen flex flex-col items-center justify-center overflow-clip bg-white">
       <GridOfSquircles />
-      <div className="relative z-10 flex flex-col items-center justify-center w-full">
-        <Hero>
-          <div></div>
-          <p className="text-lg font-medium mt-4 text-center tracking-[.25em]">
-            computer science go brrr
-          </p>
+      <div className="relative z-10 flex flex-col items-center justify-center w-full sm:h-[80vh] md:h-[80vh]">
+        <Hero className="px-14 md:px-0 ">
           <div className="min-h-30 md:min-h-auto sm:min-h-auto">
-            <TypewriterEffect words={words} className="px-14 md:px-0" />
+            <TypewriterEffect words={words} />
           </div>
-          <p className="text-xl mt-6 text-center font-medium tr">
-            The premiere computer science club @ San Francisco State University
+          <p className="text-2xl mt-6 text-center font-medium text-gray-600 ">
+            The premiere computer science club at San Francisco State University
             🍃
           </p>
+
           <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 space-x-0 md:space-x-4 mt-10">
             <PillButton
               className="bg-[#7289da] active:bg-transparent active:text-[#7289da] transition-all duration-300 dark:bg-[#7289da] text-white"

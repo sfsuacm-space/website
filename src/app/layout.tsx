@@ -55,9 +55,7 @@ export default function RootLayout({
         {children}
         <footer className="text-center p-6 mt-8">
           <div className="space-x-6"></div>
-          <p className="text-sm mt-4">
-            &copy; 2025 ACM@SFSU. All rights reserved.
-          </p>
+          <p className="text-sm mt-4">computer science go brrr</p>
         </footer>
       </body>
     </html>
