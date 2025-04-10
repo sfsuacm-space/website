@@ -2,8 +2,9 @@
 import getOrganizationLogo from "@/lib/getOrganizationLogo";
 import { cn } from "@/lib/utils";
 import { AffiliateOrganization } from "@/types/affiliateOrganization";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Image from "next/image";
+import Marquee from "react-fast-marquee";
 
 export const InfiniteMovingCards = ({
   organizations,
@@ -18,75 +19,30 @@ export const InfiniteMovingCards = ({
   pauseOnHover?: boolean;
   className?: string;
 }) => {
-  const containerRef = React.useRef<HTMLDivElement>(null);
-  const scrollerRef = React.useRef<HTMLUListElement>(null);
-
-  const [start, setStart] = useState(false);
-  function addAnimation() {
-    if (containerRef.current && scrollerRef.current) {
-      const scrollerContent = Array.from(scrollerRef.current.children);
-
-      scrollerContent.forEach((item) => {
-        const duplicatedItem = item.cloneNode(true);
-        if (scrollerRef.current) {
-          scrollerRef.current.appendChild(duplicatedItem);
-        }
-      });
-
-      getDirection();
-      getSpeed();
-      setStart(true);
-    }
-  }
-
-  useEffect(() => {
-    addAnimation();
-  });
-
-  const getDirection = () => {
-    if (containerRef.current) {
-      if (direction === "left") {
-        containerRef.current.style.setProperty(
-          "--animation-direction",
-          "forwards"
-        );
-      } else {
-        containerRef.current.style.setProperty(
-          "--animation-direction",
-          "reverse"
-        );
-      }
+  // Convert speed string to numeric value for react-fast-marquee
+  const getSpeedValue = () => {
+    switch (speed) {
+      case "fast": return 60;
+      case "normal": return 30;
+      case "slow": return 15;
+      default: return 15;
     }
   };
-  const getSpeed = () => {
-    if (containerRef.current) {
-      if (speed === "fast") {
-        containerRef.current.style.setProperty("--animation-duration", "20s");
-      } else if (speed === "normal") {
-        containerRef.current.style.setProperty("--animation-duration", "40s");
-      } else {
-        containerRef.current.style.setProperty("--animation-duration", "80s");
-      }
-    }
-  };
+
   return (
-    <div
-      ref={containerRef}
-      className={cn(
-        "scroller relative z-20 max-w-7xl overflow-hidden [mask-image:linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]",
-        className
-      )}
-    >
-      <ul
-        ref={scrollerRef}
-        className={cn(
-          "flex w-max min-w-full shrink-0 flex-nowrap gap-6 py-6",
-          start && "animate-scroll",
-          pauseOnHover && "hover:[animation-play-state:paused]"
-        )}
+    <div className={cn(
+      "scroller relative z-20 overflow-hidden [mask-image:linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]",
+      className
+    )}>
+      <Marquee
+        direction={direction}
+        speed={getSpeedValue()}
+        pauseOnHover={pauseOnHover}
+        gradient={false}
+        className="py-6"
       >
         {organizations.map((org) => (
-          <li className="flex flex-col px-16" key={org.fullName}>
+          <li className="flex flex-col px-16 list-none" key={org.fullName}>
             <div className="flex flex-row items-center cursor-pointer justify-start space-x-4 hover:opacity-10 transition-all duration-300">
               <div
                 className="flex flex-row space-x-2 w-auto justify-start items-center"
@@ -106,7 +62,7 @@ export const InfiniteMovingCards = ({
             </div>
           </li>
         ))}
-      </ul>
+      </Marquee>
     </div>
   );
-};
+};;
