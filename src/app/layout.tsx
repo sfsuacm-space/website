@@ -53,7 +53,7 @@ export default function RootLayout({
         className={`${quicksandFont.variable} font-sans ${geistMono.variable} antialiased`}
       >
         {children}
-        <footer className="text-center p-6 mt-8">
+        <footer className="text-center p-6 mt-4">
           <div className="space-x-6"></div>
           <p className="text-sm mt-4">computer science go brrr</p>
         </footer>
