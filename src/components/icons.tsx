@@ -1,4 +1,4 @@
-import { Heart } from "lucide-react";
+import { Heart, Instagram, Linkedin } from "lucide-react";
 
 // Updated type to include a size prop
 export type IconKeys = keyof typeof icons;
@@ -11,6 +11,8 @@ type IconsType = {
 };
 // The icons object with size support
 const icons = {
+  instagram: Instagram,
+  linkedin: Linkedin,
   heart: Heart,
   github: ({ size, width, height, ...props }: IconProps) => (
     <svg
