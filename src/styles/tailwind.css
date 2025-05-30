@@ -4,6 +4,7 @@
 @import "./themes/dark-mode-tokens.css";
 @import "./themes/default-tokens.css";
 @import "./utilities/brand-colors.css";
+@import "./components/layout.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -13,6 +14,14 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  h1 {
+    @apply text-5xl md:text-6xl font-bold;
+  }
+  
+  p {
+    @apply text-xl font-medium;
   }
 }
 

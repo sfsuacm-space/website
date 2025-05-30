@@ -30,16 +30,16 @@ export default function Home() {
     <div className="bg-background">
       <CanvasSquircles />
       {/* Hero Section */}
-      <section className="container mx-auto px-4 py-20 flex flex-col items-center justify-center min-h-[90vh] md:min-h-screen relative">
-        <h1 className="text-5xl md:text-6xl font-bold text-center mb-6">
+      <section className="hero-container">
+        <h1 className="text-center mb-6">
           <div className="h-[6rem] md:h-[4.5rem] flex flex-col-reverse justify-start">
             <span>
               {typewriter.renderTypedText()}
-              <span className="animate-blink text-[var(--acm-blue)]">|</span>
+              <span className="animate-blink text-acm-blue">|</span>
             </span>
           </div>
         </h1>
-        <p className="text-xl font-medium text-muted-foreground text-center mb-5 md:mb-12 max-w-4xl">
+        <p className="text-muted-foreground text-center mb-5 md:mb-12 max-w-4xl">
           The premiere computer science club at San Francisco State University.
           Building community and helping students grow since 2022.
         </p>
