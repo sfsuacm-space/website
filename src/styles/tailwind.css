@@ -3,7 +3,6 @@
 @import "./themes/theme.css";
 @import "./themes/dark-mode-tokens.css";
 @import "./themes/default-tokens.css";
-@import "./utilities/brand-colors.css";
 @import "./components/layout.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
