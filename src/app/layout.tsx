@@ -1,4 +1,4 @@
-import "@/styles/globals.css";
+import "@/styles/main.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import Head from "next/head";
 import { metadata } from "@/constants/metadata";
@@ -25,7 +25,7 @@ export default function RootLayout({
       </head>
 
       <body
-        className={`${quicksandFont.variable} font-sans ${geistMono.variable} antialiased`}
+        className={`${quicksandFont.variable} font-sans ${geistMono.variable} antialiased text-color-foreground`}
       >
         {children}
         <footer className="text-center p-6 mt-4">

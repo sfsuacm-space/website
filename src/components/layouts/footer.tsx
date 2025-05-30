@@ -38,7 +38,7 @@ export default function Footer() {
               href={ACM_INFO.GITHUB_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-700 hover:text-[var(--acm-blue)] transition-colors"
+              className="text-gray-700 hover:text-acm-blue transition-colors"
             >
               <Icons.github size={24} />
               <span className="sr-only">GitHub</span>
