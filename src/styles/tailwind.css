@@ -20,6 +20,10 @@
     @apply text-5xl md:text-6xl font-bold;
   }
   
+  h3 {
+    @apply text-lg font-semibold
+  }
+
   p {
     @apply text-xl font-medium;
   }

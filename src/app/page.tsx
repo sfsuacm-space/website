@@ -46,18 +46,14 @@ export default function Home() {
         <div className="flex flex-wrap justify-center gap-4 mb-20">
           <Button
             asChild
-            className="text-lg font-semibold bg-discord-blue h-12 hover:bg-discord-blue/o"
+            className="bg-discord-blue h-12 hover:bg-discord-blue/o"
           >
             <Link href={ACM_INFO.ACM_DISCORD_INVITE_URL} target="_blank">
               <Icons.discord width={24} height={24} />
-              Join Us
+              <h3>Join Us</h3>
             </Link>
           </Button>
-          <Button
-            asChild
-            variant={"outline"}
-            className="h-12 text-lg font-semibold"
-          >
+          <Button asChild variant={"outline"} className="h-12">
             <Link href={ACM_INFO.ACM_BENTO_URL} target="_blank">
               <Icons.heart
                 className="text-[var(--acm-blue)]"
@@ -65,12 +61,12 @@ export default function Home() {
                 size={24}
                 style={{ minHeight: 24, minWidth: 24 }}
               />
-              Our Socials
+              <h3>Our Socials</h3>
             </Link>
           </Button>
         </div>
         <div className="absolute bottom-6 left-0 right-0 w-full">
-          <h3 className="text-center text-lg font-semibold text-muted-foreground">
+          <h3 className="text-center text-muted-foreground">
             Our affiliate organizations
           </h3>
           <InfiniteMovingCards
