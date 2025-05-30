@@ -22,18 +22,24 @@ export const InfiniteMovingCards = ({
   // Convert speed string to numeric value for react-fast-marquee
   const getSpeedValue = () => {
     switch (speed) {
-      case "fast": return 60;
-      case "normal": return 30;
-      case "slow": return 15;
-      default: return 15;
+      case "fast":
+        return 60;
+      case "normal":
+        return 30;
+      case "slow":
+        return 15;
+      default:
+        return 15;
     }
   };
 
   return (
-    <div className={cn(
-      "scroller relative z-20 overflow-hidden [mask-image:linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]",
-      className
-    )}>
+    <div
+      className={cn(
+        "scroller relative z-20 overflow-hidden [mask-image:linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]",
+        className
+      )}
+    >
       <Marquee
         direction={direction}
         speed={getSpeedValue()}
@@ -58,11 +64,11 @@ export const InfiniteMovingCards = ({
                   className="w-10 h-auto"
                 />
               </div>
-              <p className="text-2xl font-bold text-gray-900">{org.name}</p>
+              <h3>{org.name}</h3>
             </div>
           </li>
         ))}
       </Marquee>
     </div>
   );
-};;
+};

@@ -5,11 +5,11 @@ import { Icons } from "../icons";
 
 export default function Footer() {
   return (
-    <footer className="bg-white pt-12 border-t border-gray-200">
+    <footer className="pt-12 border-t">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-6 md:mb-0">
-            <div className="text-2xl font-bold mb-2 text-gray-900 flex flex-row gap-4">
+            <div className="text-2xl font-bold mb-2 flex flex-row gap-4">
               <Image
                 src="/assets/logos/avatar-logo.png"
                 alt="ACM Logo"
@@ -19,7 +19,7 @@ export default function Footer() {
               />
               ACM at SFSU
             </div>
-            <p className="text-gray-600 text-lg font-medium">
+            <p className="text-foreground text-lg font-medium">
               A community of computer science students, built with love and
               passion for all things fun and computing.
             </p>

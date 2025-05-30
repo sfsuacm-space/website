@@ -39,10 +39,10 @@ export default function Home() {
             </span>
           </div>
         </h1>
-        <p className="text-muted-foreground text-center mb-5 md:mb-12 max-w-4xl">
+        <h5 className="text-secondary-foreground text-center mb-5 md:mb-12 max-w-4xl">
           The premiere computer science club at San Francisco State University.
           Building community and helping students grow since 2022.
-        </p>
+        </h5>
         <div className="flex flex-wrap justify-center gap-4 mb-20">
           <Button
             asChild
@@ -50,25 +50,25 @@ export default function Home() {
           >
             <Link href={ACM_INFO.ACM_DISCORD_INVITE_URL} target="_blank">
               <Icons.discord width={24} height={24} />
-              <h3>Join Us</h3>
+              <h4>Join Us</h4>
             </Link>
           </Button>
           <Button asChild variant={"outline"} className="h-12">
             <Link href={ACM_INFO.ACM_BENTO_URL} target="_blank">
               <Icons.heart
-                className="text-[var(--acm-blue)]"
+                className="text-acm-blue"
                 fill="currentColor"
                 size={24}
                 style={{ minHeight: 24, minWidth: 24 }}
               />
-              <h3>Our Socials</h3>
+              <h4>Our Socials</h4>
             </Link>
           </Button>
         </div>
         <div className="absolute bottom-6 left-0 right-0 w-full">
-          <h3 className="text-center text-muted-foreground">
+          <h4 className="text-center text-secondary-foreground">
             Our affiliate organizations
-          </h3>
+          </h4>
           <InfiniteMovingCards
             organizations={affiliateOrganizations}
             speed="normal"
