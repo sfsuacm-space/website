@@ -29,7 +29,7 @@ export default function Footer() {
               href={ACM_INFO.ACM_DISCORD_INVITE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-700 hover:text-[var(--acm-blue)] transition-colors"
+              className="text-gray-700 hover:text-acm-bluetransition-colors"
             >
               <Icons.discord height={24} width={24} />
               <span className="sr-only">Discord</span>
@@ -47,7 +47,7 @@ export default function Footer() {
               href={ACM_INFO.ACM_INSTAGRAM_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-700 hover:text-[var(--acm-blue)]  transition-colors"
+              className="text-gray-700 hover:text-acm-blue transition-colors"
             >
               <Icons.instagram size={24} />
               <span className="sr-only">Instagram</span>
@@ -56,7 +56,7 @@ export default function Footer() {
               href={ACM_INFO.ACM_LINKEDIN_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-700 hover:text-[var(--acm-blue)]  ransition-colors"
+              className="text-gray-700 hover:text-acm-blue ransition-colors"
             >
               <Icons.linkedin size={24} />
               <span className="sr-only">LinkedIn</span>
