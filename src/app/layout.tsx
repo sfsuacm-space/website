@@ -25,7 +25,7 @@ export default function RootLayout({
       </head>
 
       <body
-        className={`${quicksandFont.variable} font-sans ${geistMono.variable} antialiased text-color-foreground`}
+        className={`${quicksandFont.variable} ${geistMono.variable} antialiased text-color-foreground`}
       >
         {children}
         <footer className="text-center p-6 mt-4">
