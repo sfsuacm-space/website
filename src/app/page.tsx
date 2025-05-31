@@ -7,10 +7,10 @@ import affiliateOrganizations from "@/constants/organizations";
 import { ACM_INFO } from "@/constants/messages";
 import CanvasSquircles from "@/components/grid-of-squircles";
 import Footer from "@/components/layouts/footer";
-import { useTypewriter } from "@/hooks/use-typewriter";
+import { TypewriterConfig, useTypewriter } from "@/hooks/use-typewriter";
 
-const pageConfig = {
-  headerText: "party hard. code harder. ACM at SFSU.",
+const pageConfig: TypewriterConfig = {
+  text: "party hard. code harder. ACM at SFSU.",
   monoText: "code harder.",
   typingSpeed: 100,
   deleteSpeed: 50,
@@ -18,13 +18,7 @@ const pageConfig = {
 };
 
 export default function Home() {
-  const typewriter = useTypewriter({
-    text: pageConfig.headerText,
-    monoText: pageConfig.monoText,
-    typingSpeed: pageConfig.typingSpeed,
-    deleteSpeed: pageConfig.deleteSpeed,
-    pauseTime: pageConfig.pauseTime,
-  });
+  const typewriter = useTypewriter(pageConfig);
 
   return (
     <div className="bg-background">

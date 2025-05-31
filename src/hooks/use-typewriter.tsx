@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-interface TypewriterConfig {
+export interface TypewriterConfig {
   text: string;
   monoText: string;
   typingSpeed: number;
