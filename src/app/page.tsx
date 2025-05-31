@@ -33,10 +33,10 @@ export default function Home() {
             </span>
           </div>
         </h1>
-        <h5 className="text-secondary-foreground text-center mb-5 md:mb-12 max-w-4xl">
+        <h4 className="text-secondary-foreground text-center mb-5 md:mb-12 max-w-4xl">
           The premiere computer science club at San Francisco State University.
           Building community and helping students grow since 2022.
-        </h5>
+        </h4>
         <div className="flex flex-wrap justify-center gap-4 mb-20">
           <Button
             asChild
@@ -60,9 +60,9 @@ export default function Home() {
           </Button>
         </div>
         <div className="absolute bottom-6 left-0 right-0 w-full">
-          <h4 className="text-center text-secondary-foreground">
+          <h5 className="text-center text-secondary-foreground">
             Our affiliate organizations
-          </h4>
+          </h5>
           <InfiniteMovingCards
             organizations={affiliateOrganizations}
             speed="normal"
