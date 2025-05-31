@@ -44,7 +44,7 @@ export default function Home() {
           >
             <Link href={ACM_INFO.ACM_DISCORD_INVITE_URL} target="_blank">
               <Icons.discord width={24} height={24} />
-              <h4>Join Us</h4>
+              <h5>Join Us</h5>
             </Link>
           </Button>
           <Button asChild variant={"outline"} className="h-12">
@@ -55,7 +55,7 @@ export default function Home() {
                 size={24}
                 style={{ minHeight: 24, minWidth: 24 }}
               />
-              <h4>Our Socials</h4>
+              <h5>Our Socials</h5>
             </Link>
           </Button>
         </div>
