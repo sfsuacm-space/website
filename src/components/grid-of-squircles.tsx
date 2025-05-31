@@ -49,7 +49,7 @@ const GridOfSquircles: React.FC = () => {
           {squircleStates.map((isVisible, index) => (
             <div
               key={index}
-              className={`w-60 h-60 bg-blue-100 rounded-[20%] transition-opacity duration-1000 ease-in-out ${
+              className={`w-60 h-60 bg-acm-blue/10 rounded-[20%] transition-opacity duration-1000 ease-in-out ${
                 isVisible ? "opacity-100" : "opacity-0"
               }`}
             />
