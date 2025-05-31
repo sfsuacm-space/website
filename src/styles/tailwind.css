@@ -4,6 +4,8 @@
 @import "./themes/dark-mode-tokens.css";
 @import "./themes/default-tokens.css";
 @import "./components/layout.css";
+@import "./utilities/animations.css";
+@import "./utilities/typography.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -14,46 +16,4 @@
   body {
     @apply bg-background text-foreground;
   }
-
-  h1 {
-    @apply text-5xl md:text-6xl font-bold;
-  }
-
-  h2 {
-    @apply text-3xl md:text-4xl font-bold;
-  }
-
-  h3 {
-    @apply text-2xl font-bold;
-  }
-  
-  h4 {
-    @apply text-lg font-semibold
-  }
-
-  h5 {
-    @apply text-xl font-medium;
-  }
-
-  p {
-    @apply text-lg font-medium;
-  }
-
-  
-}
-
-
-
-@keyframes blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-}
-
-.animate-blink {
-  animation: blink 1s step-end infinite;
 }
